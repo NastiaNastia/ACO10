@@ -1,13 +1,27 @@
 package HomeworkWeek2;
 
+/* Написать программу позволяющую узнать следующую информацию:
+1) посмотреть список читателей
+2) посмотреть список доступных книг
+3) добавить книгу в библиотеку
+4) добавить читателя в список читателей
+5) выдать книгу читателю (если книга есть в наличии).
+Читателю запрещается брать больше 3-х книг.
+6) посмотреть список книг, которые находятся у читателей
+7) посмотреть список книг, которые находятся у конкретного читателя
+8) добавить читателя в черный список (ему нельзя выдавать книги)
+9) посмотреть книги конкретного автора
+10) посмотреть новые книги (год издания выше 2013)*/
+
+
 
 import java.util.ArrayList;
 
 public class Library {
+
     ArrayList<Reader> readers = new ArrayList<>();
     ArrayList<Reader> blackListOfReaders = new ArrayList<>();
     ArrayList<Book> books = new ArrayList<>();
-    ArrayList<Book> givenBooks = new ArrayList<>();
 
     public void showReaders() {
         for (Reader reader : readers) {
@@ -17,74 +31,68 @@ public class Library {
 
     public void showAvailableBooks() {
         for (Book book : books) {
-            System.out.println(book);
+            if (book.getIsBookAvailable()) {
+                System.out.println(book);
+            }
         }
     }
 
     public void addBookToLibrary (Book book) {
         books.add(book);
-        System.out.println(book.name + " was added to the library.");
+        System.out.println("Book was added to the library.");
     }
 
 
     public void addReaderToReadersList(Reader reader) {
         readers.add(reader);
-        System.out.println(reader.name + " was added to the Readers list of library.");
+        System.out.println("Reader was added to the Readers list of library.");
     }
 
     public void giveBookToReader(Reader reader, Book book) {
-        if (books.contains(book)) {
-            for (int i = 0; i < reader.booksOfReader.length; i++) {
-                if (reader.booksOfReader[i] == null) {
-                    reader.booksOfReader[i] = book;
-                /* ВОПРОС. НЕ РАГУЛЬНОЕ ЛИ СЛЕДУЮЩЕЕ ДЕЙСТВИЕ, если предварительно написать следующий метод?
-                        book.removeBook(book);
-                    public void removeBook (Book book) {
-                    books.remove(book);
-                    System.out.println(book + " was removed from library.");
-                    }*/
-                    books.remove(book);
-                    givenBooks.add(book);
-                    break;
-
-                } else {
-                    System.out.println("You've already got 3 books. You must return one for get new.");
-                }
+        if (book.getIsBookAvailable()) {
+            if (reader.getBooksOfReader().size() < Reader.limitOfBooks) {
+                reader.getBooksOfReader().add(book);
+                book.setIsBookAvailable();
+            } else {
+                System.out.println("You've already have three books. Please, return one for get another.");
             }
         } else {
-            System.out.println("This book is not available at the moment.");
+            System.out.println("Sorry. This book is not available for the moment.");
         }
     }
 
-    public void showGivenBooks () {
-        for (Book book : givenBooks) {
-            System.out.println(book);
+    public void showBooksOfAllReaders () {
+        for (Book book : books) {
+            if (!book.getIsBookAvailable()) {
+                System.out.println(book);
+            }
         }
     }
 
     public void showBooksOfConcreteReader (Reader concreteReader) {
-        for (int i = 0; i < concreteReader.booksOfReader.length; i++) {
-            System.out.println(concreteReader.booksOfReader[i] + " , ");
+        for (Book book : concreteReader.getBooksOfReader()) {
+            System.out.println(book);
         }
     }
 
+
    public  void addReaderToBlackList (Reader naughtyReader) {
      blackListOfReaders.add(naughtyReader);
-       System.out.println("Tre reader" + naughtyReader.name + "was added to black list.");
+       System.out.println("The reader was added to black list.");
    }
 
-    public void showBooksOfConcreteAuthor (String authorsName) {
+    public void showBooksOfConcreteAuthor (String author) {
         for (Book book : books) {
-            if (book.author.equals(authorsName)) {
-                System.out.println(book + " , ");
+            if (book.getAuthor().equals(author)) {
+                System.out.println (book);
             }
         }
     }
 
     public void showBooksPublishedInExactYear (int yearPublished) {
         for (Book book : books) {
-            if (book.yearPublished == yearPublished) {
-                System.out.println(book.name + " , ");
+            if (book.getYearPublished() == yearPublished) {
+                System.out.print(book);
             }
         }
     }
